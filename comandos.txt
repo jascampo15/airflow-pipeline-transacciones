@@ -1,0 +1,23 @@
+   docker compose build
+#   docker compose up airflow-init
+#   docker compose up -d
+    docker compose ps ver el estado
+#   docker compose down        (conserva el historial)
+#   docker compose down -v     (borra tambien el historial)
+
+docker compose exec airflow-api-server airflow tasks test ingesta_usos_api obtener_y_guardar_datos_postgres
+
+docker compose exec airflow-api-server airflow tasks test ingesta_lineas cargar_excel_a_postgres
+
+docker compose exec airflow-api-server airflow tasks test dag_transformacion_usos transformar_y_cargar_usos_silver 2026-10-03
+
+docker compose exec airflow-api-server airflow dags trigger dag_transformacion_usos
+
+docker compose exec airflow-api-server airflow tasks test dag_transformacion_lines transformar_y_cargar_lines_silver
+
+docker compose exec airflow-api-server airflow tasks test dag_usos_gold cargar_consolidado_usos_gold
+
+
+
+
+

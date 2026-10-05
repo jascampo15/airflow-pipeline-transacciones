@@ -1,0 +1,19 @@
+# Airflow / Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+airflow.db
+logs/
+plugins/
+*.log
+
+# Archivos de SO e IDE
+.DS_Store
+.vscode/
+.idea/
+
+# Datos sensibles o pesados (Ajustar según conveniencia)
+*.xlsx
+*.csv

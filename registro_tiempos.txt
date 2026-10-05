@@ -1,0 +1,12 @@
+==================================================
+REGISTRO DE PRUEBA SIMPLIFICADO - 2026-09-14 16:45:24
+==================================================
+Escenario: (c) 2 Workers con worker_concurrency=3 cada uno
+DURACIÓN REGISTRADA (TotalSeconds): 31.0978882
+==================================================
+==================================================
+REGISTRO DE PRUEBA SIMPLIFICADO - 2026-09-14 16:46:49
+==================================================
+Escenario: (c) 2 Workers con worker_concurrency=3 cada uno
+DURACIÓN REGISTRADA (TotalSeconds): 27.3915319
+==================================================

@@ -1,0 +1,75 @@
+Utiliza la estructura recomendada para el dag de ingesta del archivo en excel
+
+Nombre dag: ingesta lineas
+Ruta archivo: C:\cursoairflow\dags\Proyecto_final_airflow
+Nombre archivo: linedetails.xlsx
+Nombre tabla postgres: lines_raw
+
+Ahora se requiere construir el dag de la capa silver en la transformación de los datos para la tabla usos_raw
+
+Nombre dag: dag transformacion usos
+Nombre tabla postgres: uses_silver
+
+condiciones creacion del dad:
+El campo idTxn es nuestro condicion para traer los datos de  la tabla usos_raw con id base = 6282720 o calcule el maximo de la tabla uses_silver
+el campo dateTime": con estas estructura "261002115500" en la tabla usos_raw convertir al formato YYYY-MM-DD- hh:mm:ss para la tabla la tabla uses_silver
+el campo vehId limpiar los ceros a la izquierda ejemplo 022027 que quede 22027 
+
+El resto de campos de la tabla usos_raw pasar igual a la tabla uses_silver
+
+Ajustar el proceso de la datetime, este viene en UTC+0 y lo necesito en UTC-5
+
+Ahora se requiere construir el dag para la transformacion de las lineas, de la tabla  lines_raw tomar los siguientes campos LD_ID, LD_DESC, LD_DESCSHORT, LD_STATUS para
+insertarlos a la nueva tabla lines_silver.
+
+Al siguiente dag ajustar estas transformaciones antes de guardar en la tabla uses_silver
+el campo id_line limpiar los ceros a la izquierda ejemplo 0101 que quede 101
+el campo amount es de valor, esta en text 000000350000 y debe quedar en 3500 
+
+en que formato quedan estos registros dentro de la base de datos:
+id_line
+amount 
+
+Ahora se requiere crear el dag para la capa gold, el objetivo es consolidar datos de la capa silver
+
+Nombre dag: dag usos gold
+Nombre tabla postgres: uses_gold
+
+El objetivo es que cargue a la tabla uses_gold los siguientes registros de este query:
+SELECT 
+    TO_CHAR(a.date_time, 'YYYY-MM-DD') AS fecha,
+    TO_CHAR(a.date_time, 'HH24') AS fecha,
+    a.id_line AS id_linea,
+    b.ld_descshort AS name_linea,
+    a.type_intg AS integracion,
+    a.veh_id AS veh_id,
+    a.terminal_id AS sn_terminal,
+    a.amount As valor,
+    COUNT(*) AS total_trx
+FROM usos_silver a
+INNER JOIN lines_silver b ON CAST(b.ld_id AS BIGINT) = CAST(a.id_line AS BIGINT)
+WHERE a.date_time IS NOT NULL
+GROUP BY TO_CHAR(a.date_time, 'YYYY-MM-DD'),
+TO_CHAR(a.date_time, 'HH24'), 
+a.id_line,
+b.ld_descshort,
+a.type_intg,
+a.veh_id ,
+a.terminal_id, 
+a.amount
+ORDER BY MIN(a.date_time) DESC;
+
+Pero aqui tengo varias interrogantes y la principal es como manejar te mas duplicidad en los registros consolidados, la otra es puede que en una fecha reciva transacciones de dias anteriores
+----------------------------------------------
+
+Se requiere cumplir con los requerimiento de la siguiente guia menos Modelar y transformar datos de forma versionada y testeada con Dbt, sobre un warehouse cloud
+(Snowflake) ya que lo tenemos en postgres.
+
+ajusta la Documentación integrada (doc_md) y Programación (schedule) del siguiente dag
+
+
+
+
+
+
+

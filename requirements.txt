@@ -1,0 +1,3 @@
+pendulum
+apache-airflow-providers-snowflake
+astronomer-cosmos
